@@ -1,0 +1,93 @@
+% Shared notation, units, and document callouts.
+% Intended for reuse across manuals, procedures, and engineering reports.
+
+% --- Identity of the fictional demonstration instrument ---
+\newcommand{\instrument}{Vespera FSI-200}
+\newcommand{\instrumentlong}{Vespera FSI-200 Laser Fizeau Surface Interferometer}
+\newcommand{\software}{Helion Measure}
+\newcommand{\docowner}{Zoriah Cocio}
+\newcommand{\wavelength}{\SI{632.8}{\nano\meter}}
+\newcommand{\HeNe}{He--Ne}
+
+% --- Metrology notation (safe in text or math) ---
+\newcommand{\OPD}{\ensuremath{\mathit{OPD}}}
+\newcommand{\PV}{\ensuremath{\mathrm{PV}}}
+\newcommand{\RMS}{\ensuremath{\mathrm{RMS}}}
+\newcommand{\WFE}{\ensuremath{\mathrm{WFE}}}
+\newcommand{\CA}{\ensuremath{\mathrm{CA}}}
+\newcommand{\TF}{\ensuremath{\mathrm{TF}}}
+\newcommand{\TS}{\ensuremath{\mathrm{TS}}}
+\newcommand{\RF}{\ensuremath{\mathrm{RF}}}
+\newcommand{\nmPV}{\si{\nano\meter}\ \PV}
+\newcommand{\waves}[1]{\ensuremath{#1\,\lambda}}
+\newcommand{\phase}{\ensuremath{\varphi}}
+\newcommand{\wavenumber}{\ensuremath{k}}
+
+% --- Common SI shortcuts used in running text ---
+\DeclareSIUnit{\wave}{\lambda}
+\DeclareSIUnit{\inch}{in}
+\newcommand{\um}{\si{\micro\meter}}
+\newcommand{\nm}{\si{\nano\meter}}
+\newcommand{\mrad}{\si{\milli\radian}}
+
+% --- Document-control fields ---
+\newcommand{\docnumber}[1]{\textbf{Document No.}~#1}
+\newcommand{\docrev}[1]{\textbf{Revision}~#1}
+
+% --- Procedure helper ---
+\newcounter{procstep}
+\newcommand{\resetsteps}{\setcounter{procstep}{0}}
+\newcommand{\stepn}{%
+  \refstepcounter{procstep}%
+  \par\addvspace{0.55em}%
+  \noindent\textbf{\theprocstep.}\hspace{0.6em}\ignorespaces
+}
+
+% --- Callouts ---
+\newtcolorbox{notebox}[1][Note]{%
+  enhanced,
+  breakable,
+  colback=black!3,
+  colframe=black!55,
+  boxrule=0.4pt,
+  left=6pt,
+  right=6pt,
+  top=5pt,
+  bottom=5pt,
+  fonttitle=\bfseries\sffamily,
+  title={#1}
+}
+
+\newtcolorbox{cautionbox}[1][Caution]{%
+  enhanced,
+  breakable,
+  colback=black!4,
+  colframe=black!70,
+  boxrule=0.6pt,
+  left=6pt,
+  right=6pt,
+  top=5pt,
+  bottom=5pt,
+  fonttitle=\bfseries\sffamily,
+  title={#1}
+}
+
+\newtcolorbox{warningbox}[1][Warning]{%
+  enhanced,
+  breakable,
+  colback=black!5,
+  colframe=black,
+  boxrule=0.8pt,
+  left=6pt,
+  right=6pt,
+  top=5pt,
+  bottom=5pt,
+  fonttitle=\bfseries\sffamily,
+  title={#1}
+}
+
+% --- Compact specification table row ---
+\newcommand{\spec}[2]{#1 & #2 \\}
+
+% --- Demonstration footer used by both projects ---
+\newcommand{\demoline}{Demonstration project. Fictional instrument and data. Not a commercial product.}

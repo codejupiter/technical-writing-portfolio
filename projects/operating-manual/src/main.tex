@@ -1,0 +1,376 @@
+\input{preamble-manual}
+
+\begin{document}
+\pagenumbering{roman}
+
+\begin{titlepage}
+\centering
+\vspace*{18mm}
+{\large Scientific Instrumentation Operating Manual}\\[8mm]
+{\Huge\bfseries \instrument}\\[4mm]
+{\Large Laser Fizeau Surface Interferometer}\\[10mm]
+{\large Operating Manual}\\[16mm]
+\begin{tabular}{@{}ll@{}}
+\docnumber{VES-FSI-200-OM-001} & \docrev{A} \\[0.4em]
+Prepared by & \docowner \\
+Audience & Optical metrology technicians and engineers \\
+\end{tabular}
+
+\vspace{14mm}
+\begin{tcolorbox}[colback=black!4, colframe=black, boxrule=0.6pt, width=0.86\textwidth]
+\textbf{Demonstration project.} This document describes a fictional instrument created to show scientific documentation, procedure writing, and LaTeX typesetting. It is not a commercial product, not a safety-certified manual, and not affiliated with any manufacturer.
+\end{tcolorbox}
+
+\vfill
+{\small Version date: 15~November~2026}\\[2mm]
+{\small Shared template: \texttt{templates/} in the technical writing portfolio}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\chapter{Document control}
+
+This manual is the primary operating document for the \instrumentlong. It covers safe use, system architecture, specifications, measurement procedures, calibration, troubleshooting, and maintenance.
+
+\begin{table}[h]
+\centering
+\caption{Revision history}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Rev & Date & Description & Author \\
+\midrule
+A & 15 Nov 2026 & Initial demonstration issue & \docowner \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[How this document is structured]
+Procedures are written as numbered steps with prerequisites, expected results, and the next action if the result is not met. Safety conditions appear before the first energizing step. Mathematical definitions used in software reports are given where an operator must interpret a number, not as a substitute for the engineering report in this portfolio.
+\end{notebox}
+
+Related demonstration document: \emph{Uncertainty Budget for Phase-Shifting Fizeau Interferometry of Optical Flats}.
+
+\chapter{Safety}
+
+\section{Intended use}
+
+\instrument\ measures the reflected surface form of polished optical components by laser Fizeau interferometry. It is intended for laboratory or optical-shop use by trained personnel. It is not a medical device and is not rated for explosive atmospheres.
+
+\section{Laser radiation}
+
+The source is a frequency-stabilized \HeNe\ laser at \wavelength. For this demonstration design the accessible beam after the shutter is treated as \textbf{Class~2}: brief accidental exposure is unlikely to cause injury because of the blink reflex, but deliberate viewing of the beam is prohibited.
+
+\begin{warningbox}
+Never look into the output aperture, the transmission-flat mount, or a specular return from a test part. Do not use binoculars, cameras with optical viewfinders, or other collecting optics on the beam. Wear laser eyewear only if a written local procedure requires it; eyewear is not a substitute for beam control.
+\end{warningbox}
+
+\resetsteps
+\stepn Confirm the laser emission indicator is visible from the operator position.
+\stepn Keep the shutter closed until the test part is mounted and the cavity is roughly aligned.
+\stepn Block unused beam paths with anodized beam dumps. Do not use white cards as permanent stops.
+\stepn After measurement, close the shutter before removing the part.
+
+\section{Electrical and mechanical}
+
+The instrument uses mains power and a motorized focus stage. Do not defeat interlocks. Do not reach into the bayonet while the stage is commanded to move. Disconnect mains before removing covers; there are no operator-serviceable parts inside the laser head.
+
+\section{Optics handling}
+
+Transmission flats, transmission spheres, and test parts are precision surfaces.
+
+\begin{cautionbox}
+Fingerprints, tissue abrasion, and overtightened bayonet nuts permanently degrade a reference surface. Seat the transmission optic, then snug the retaining nuts evenly. Do not torque a \TF\ or \TS\ as if it were a mechanical flange.
+\end{cautionbox}
+
+\chapter{System description}
+
+\section{Measurement principle}
+
+A Fizeau interferometer compares a test surface to a reference surface that shares most of the same optical path. The optical path difference between the two reflected wavefronts is
+\begin{equation}
+  \OPD(x,y) = 2\,n\,h(x,y),
+  \label{eq:opd}
+\end{equation}
+where $h(x,y)$ is the round-trip surface-height difference and $n$ is the refractive index of the cavity medium (air, for this instrument). The observed intensity for a temporal phase-shifting acquisition is
+\begin{equation}
+  I_k(x,y) = I'(x,y) + I''(x,y)\cos\bigl[\phase(x,y) + \delta_k\bigr],
+  \label{eq:intensity}
+\end{equation}
+with phase increments $\delta_k$ introduced by a calibrated phase shifter. \software\ unwraps $\phase$, removes piston and tilt as specified by the procedure, and reports surface form in nanometres and in waves at \wavelength.
+
+\section{Major assemblies}
+
+\begin{itemize}
+  \item Laser source and shutter
+  \item Beam-expansion and collimation optics
+  \item Tip/tilt bayonet for the transmission reference (\TF\ or \TS)
+  \item Imaging channel and alignment camera
+  \item Motorized focus stage
+  \item \software\ acquisition and analysis workstation
+\end{itemize}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  box/.style={draw, minimum height=9mm, inner xsep=4pt, align=center},
+  arr/.style={-{Latex}, thick}
+]
+\node[box, minimum width=18mm] (laser) {Laser\\\wavelength};
+\node[box, minimum width=16mm, right=6mm of laser] (shutter) {Shutter};
+\node[box, minimum width=22mm, right=6mm of shutter] (exp) {Beam\\expander};
+\node[box, minimum width=20mm, right=6mm of exp] (tf) {Reference\\\TF/\TS};
+\node[box, minimum width=20mm, right=8mm of tf] (part) {Test\\surface};
+\draw[arr] (laser) -- (shutter);
+\draw[arr] (shutter) -- (exp);
+\draw[arr] (exp) -- (tf);
+\draw[arr] (tf) -- (part);
+\draw[arr, dashed] ($(part.west)+(0,2.2mm)$) -- ($(tf.east)+(0,2.2mm)$);
+\node[font=\footnotesize, above=1mm of tf] {cavity};
+\draw[thick] ($(exp.north west)+(-2mm,8mm)$) rectangle ($(exp.north west)+(18mm,16mm)$);
+\node[font=\footnotesize] at ($(exp.north west)+(8mm,12mm)$) {Camera};
+\draw[arr] ($(exp.north)+(0,0)$) -- ++(0,8mm);
+\node[font=\footnotesize, align=left, below=3mm of part] {Return beam retraces the\\reference path (Fizeau)};
+\end{tikzpicture}
+\caption{Optical layout of \instrument. Most common-path optics cancel in the difference measurement; residual retrace error still requires the transmission reference to be aligned to the instrument axis.}
+\label{fig:layout}
+\end{figure}
+
+\section{Software}
+
+\software\ provides live alignment video, fringe video, phase-shifting acquisition, masking, Zernike term removal, and a printable report. Custom analysis terms used in this manual:
+
+\begin{center}
+\begin{tabular}{@{}>{\ttfamily}l l@{}}
+\toprule
+Command-like name & Meaning \\
+\midrule
+\verb|\PV| & Peak-to-valley of the reported surface map \\
+\verb|\RMS| & Root-mean-square of the reported surface map \\
+\verb|\CA| & Clear aperture used for the statistic \\
+\verb|\TF|, \verb|\TS| & Transmission flat or sphere \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+These commands live in the shared file \texttt{templates/commands.tex} and are the same symbols used in the companion engineering report.
+
+\chapter{Technical specifications}
+
+Specifications below describe the fictional demonstration instrument. They are internally consistent with the procedures in this manual and are not copied from a commercial datasheet.
+
+\begin{table}[ht]
+\centering
+\caption{Optical and metrology specifications}
+\label{tab:optical}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Parameter & Specification \\
+\midrule
+\spec{Instrument}{\instrumentlong}
+\spec{Test aperture}{\SI{102}{\milli\meter} maximum}
+\spec{Source}{Frequency-stabilized \HeNe, \wavelength}
+\spec{Acquisition}{Temporal phase shifting, five-bucket Schwider--Hariharan}
+\spec{Camera}{\(2048\times 2048\), 12-bit}
+\spec{Reported form}{Surface height from Eq.~\eqref{eq:opd}}
+\spec{Focus travel}{\SI{100}{\milli\meter}}
+\spec{Bayonet tip/tilt}{\(\pm\SI{2}{\degree}\)}
+\spec{Alignment camera}{On-axis return-spot display}
+\spec{Workstation software}{\software\ 3.2}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Environment, utilities, and mechanical}
+\label{tab:env}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Parameter & Specification \\
+\midrule
+\spec{Operating temperature}{\(\SI{20}{\celsius}\pm\SI{1}{\celsius}\)}
+\spec{Temperature drift}{\(\le\SI{0.2}{\celsius}\) per hour recommended}
+\spec{Relative humidity}{\SIrange{30}{60}{\percent}, non-condensing}
+\spec{Mains}{\SI{100}{\volt}--\SI{240}{\volt}, \SI{50}{\hertz}--\SI{60}{\hertz}}
+\spec{Mass (head)}{\SI{38}{\kilogram}}
+\spec{Bayonet}{\SI{4.25}{\inch} kinematic seat}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{notebox}[Reference optics]
+A transmission flat or transmission sphere is an accessory, not part of the interferometer cavity until mounted. Form error of the reference adds directly to the uncalibrated measurement. Use a calibrated \TF/\TS\ and the reference-subtraction procedure in Chapter~\ref{ch:cal}.
+\end{notebox}
+
+\chapter{Operating procedures}
+
+\section{Prerequisites}
+
+Before applying power:
+
+\begin{itemize}
+  \item Optical table isolated from shop-floor vibration to the extent available
+  \item Transmission optic inspected and seated
+  \item Test part clean, mounted, and within the focus travel
+  \item \software\ licensed dongle present
+\end{itemize}
+
+\section{Startup}
+
+\resetsteps
+\stepn Switch mains on. Wait until the laser controller reports \texttt{LOCKED} (typically \SI{15}{\minute} from a cold start).
+\stepn Launch \software. Confirm the instrument serial number matches the calibration record.
+\stepn Open the alignment camera. Leave the shutter closed.
+\stepn Expected result: a dark alignment scene and a green \texttt{READY} indicator. If \texttt{READY} is absent, see Chapter~\ref{ch:trouble}.
+
+\section{Align the transmission flat}
+\label{sec:align-tf}
+
+This procedure minimizes retrace error by putting the \TF\ return on the instrument axis.
+
+\textbf{Tools:} \instrument, transmission flat, corner-cube retroreflector.
+
+\resetsteps
+\stepn Mount the \TF. Snug the bayonet nuts evenly. Do not fully tighten one nut first.
+\stepn Open the shutter. On the alignment camera, adjust bayonet tip/tilt until the bright \TF\ return is centered on the target.
+\stepn Ignore the weaker first-surface ghost; it is usually the AR-coated face of a wedged \TF.
+\stepn Switch to fringe view. Place the corner cube in the test beam.
+\stepn Fine-adjust tip/tilt until the corner-cube interferogram is nulled or symmetric about the cube apex.
+\stepn Expected result: a stable, low-tilt interferogram of the cube. Remove the cube. The \TF\ is now the instrument reference.
+
+\begin{cautionbox}
+If the nuts are overtightened, the \TF\ reference surface warps. The measurement then reports fixture strain, not the test part. Loosen, reseat, and repeat from step~1.
+\end{cautionbox}
+
+\section{Measure a flat}
+
+\textbf{Tools:} aligned \TF\ (Section~\ref{sec:align-tf}), two- or five-axis mount, test flat.
+
+\resetsteps
+\stepn Mount the test flat. Do not disturb the \TF\ tip/tilt.
+\stepn In alignment mode, overlay the test return on the \TF\ return.
+\stepn In fringe view, adjust only the \emph{test} mount until tilt fringes are minimized.
+\stepn Focus on the part edge at the highest useful zoom. Use the mid-point between the two positions where edge diffraction grows; then acquire a map and jog focus until the edge zone is minimized (see the companion report for why defocus creates a rolled edge).
+\stepn Acquire. Average \(N\) frames if air turbulence is visible; noise reduction scales approximately as \(1/\sqrt{N}\) until instrument repeatability dominates.
+\stepn In analysis, remove tilt only unless the drawing calls for additional terms. Set the clear aperture to the specified \CA. Apply edge erosion only to remove pixels outside that aperture.
+\stepn Expected result: a surface map with a defined \CA, reported \(\PV\) and \(\RMS\), and a stored report file.
+
+\section{Measure a spherical surface}
+
+\textbf{Tools:} transmission sphere matched to the part \(R/\#\), five-axis mount, optional alignment flag.
+
+The transmission-sphere \(f/\#\) must be equal to or faster than the part \(R/\# = R_{\mathrm{vertex}}/\CA\). A slower \TS\ underfills the part.
+
+\resetsteps
+\stepn Mount the \TS. Repeat the coarse on-axis return alignment used for a \TF.
+\stepn Move the test surface to the cat's-eye position (focus of the \TS). The interferogram is insensitive to small \(X,Y\) translation.
+\stepn Adjust \TS\ tip/tilt until the cat's-eye interferogram is balanced.
+\stepn Translate the part to the confocal position. For a concave surface, move away from the \TS; for convex, toward it.
+\stepn Null power with the \(Z\) stage and residual coma with \(X,Y\). Do not use \TS\ tip/tilt to null a mis-centered sphere.
+\stepn Focus, acquire, and report \(\PV\)/\(\RMS\) over the specified \CA. Nominally remove tilt and power unless the specification says otherwise.
+
+\chapter{Calibration}
+\label{ch:cal}
+
+\section{What is calibrated}
+
+Three quantities are distinguished:
+
+\begin{enumerate}
+  \item \textbf{Phase-shifter calibration} --- the actual \(\delta_k\) sequence versus the commanded sequence.
+  \item \textbf{Pixel scale} --- millimetres per pixel in the part plane, required for slope and clear-aperture dimensions.
+  \item \textbf{Reference subtraction} --- a stored cavity or \TF\ error map subtracted from subsequent measurements.
+\end{enumerate}
+
+\section{Phase-shifter check}
+
+\resetsteps
+\stepn Align a stable \TF-to-corner-cube cavity.
+\stepn Run \software\ command \texttt{Tools > Phase shifter > Five-bucket residual}.
+\stepn Expected result: residual phase-shift error \(\le \SI{5}{\milli\radian}\) RMS. If higher, do not measure production parts; see Chapter~\ref{ch:trouble}.
+
+\section{Pixel scale}
+
+\resetsteps
+\stepn Place a target of known diameter in the plane of the test surface.
+\stepn Draw the calibration line in \software\ and enter the known length.
+\stepn Save the scale with the instrument configuration, not only with a single part file.
+
+\section{Reference subtraction}
+
+For the highest-accuracy flats, measure a calibrated reference optic, store the map, and subtract it from production measurements of the same conjugates. Disable subtraction when the \TF, zoom, or focus changes.
+
+\begin{notebox}[Traceability]
+This demonstration manual does not assign a calibration laboratory or a due date. A production quality system would attach an unbroken chain from the working \TF\ to a national-metrology artefact. The companion report shows how those terms enter an uncertainty budget.
+\end{notebox}
+
+\chapter{Troubleshooting}
+\label{ch:trouble}
+
+\begin{table}[ht]
+\centering
+\caption{Operator-level faults}
+\label{tab:trouble}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.28\textwidth}
+                >{\raggedright\arraybackslash}p{0.32\textwidth}
+                >{\raggedright\arraybackslash}p{0.32\textwidth}@{}}
+\toprule
+Symptom & Likely cause & Action \\
+\midrule
+No return spot & Shutter closed, laser not locked, or part grossly misaligned & Confirm \texttt{LOCKED}, open shutter, search in alignment mode \\
+Two spots of different brightness & Wedged \TF\ ghost & Align to the brighter, coated-reference return \\
+Washing fringes & Turbulence or vibration & Average; shorten cavity; wait for thermal settle \\
+Rolled edge on every part & Defocus & Repeat focus; erode only after focus is optimized \\
+Astigmatism that follows the \TF\ nuts & Distorted reference & Reseat \TF; snug nuts evenly \\
+\texttt{READY} absent & Interlock or communication & Power cycle workstation, then instrument; do not cycle the laser at high cadence \\
+Phase-shifter residual high & Unstable cavity or worn shifter & Recheck alignment; if repeatable, remove from service \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Maintenance}
+
+\section{Daily}
+
+Wipe only the outer covers. Do not clean a mounted \TF\ as a daily ritual; clean when contamination is visible in the interferogram.
+
+\section{Reference optics}
+
+If cleaning is required, use reagent-grade solvent and unused lens tissue, drawing the tissue so that it does not dry on the surface. Do not use applied pressure at the centre of a \TF.
+
+\section{Intervals}
+
+\begin{table}[ht]
+\centering
+\caption{Demonstration maintenance intervals}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Task & Interval \\
+\midrule
+Inspect bayonet and nuts & Weekly \\
+Phase-shifter residual check & Monthly, and after any shock \\
+Pixel-scale check & After any imaging-channel service \\
+Full cavity cleanliness inspection & Quarterly \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Operator maintenance stops at covers, mounts, and cleanliness. Laser-head or imaging-channel service is not an operator task.
+
+\chapter{Revision notes for documentation engineers}
+
+This source is intentionally structured as a reusable manual, not as a one-off PDF:
+
+\begin{itemize}
+  \item Shared commands in \texttt{templates/commands.tex} keep symbols such as \(\PV\), \(\RMS\), and \(\OPD\) identical across the manual and the engineering report.
+  \item Callout environments (\texttt{notebox}, \texttt{cautionbox}, \texttt{warningbox}) separate safety from procedure.
+  \item Figure~\ref{fig:layout} is TikZ, so the optical diagram stays in version control as text.
+  \item Headers identify the document as a demonstration on every page.
+\end{itemize}
+
+The instrument, software, and specifications are fictional. They exist to show how I write scientific operating documents in LaTeX.
+
+\end{document}

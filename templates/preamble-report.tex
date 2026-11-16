@@ -1,0 +1,74 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[
+  margin=1in,
+  headheight=14pt,
+  footskip=28pt
+]{geometry}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{siunitx}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,patterns}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[most]{tcolorbox}
+\usepackage{caption}
+\usepackage{csquotes}
+\usepackage[
+  backend=biber,
+  style=numeric,
+  sorting=none,
+  maxbibnames=6
+]{biblatex}
+\usepackage{hyperref}
+
+\addbibresource{references.bib}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black,
+  pdftitle={Uncertainty Budget for Phase-Shifting Fizeau Interferometry of Optical Flats},
+  pdfauthor={Zoriah Cocio},
+  pdfsubject={Demonstration scientific engineering report}
+}
+
+\sisetup{
+  detect-all,
+  per-mode=symbol
+}
+
+\setlist[itemize]{leftmargin=1.4em, itemsep=0.25em, topsep=0.35em}
+\setlist[enumerate]{leftmargin=1.6em, itemsep=0.3em, topsep=0.4em}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries}
+  {\thesection}{0.7em}{}
+\titleformat{\subsection}
+  {\normalfont\bfseries}
+  {\thesubsection}{0.7em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Uncertainty budget for Fizeau flats}
+\fancyhead[R]{\small Demonstration project}
+\fancyfoot[L]{\footnotesize\demoline}
+\fancyfoot[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{1.2em}
+\input{commands}

@@ -1,0 +1,77 @@
+\documentclass[11pt,letterpaper,oneside]{report}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[
+  margin=1in,
+  headheight=14pt,
+  footskip=28pt
+]{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{siunitx}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,patterns,decorations.pathreplacing}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black,
+  pdftitle={Vespera FSI-200 Operating Manual},
+  pdfauthor={Zoriah Cocio},
+  pdfsubject={Demonstration scientific instrumentation manual}
+}
+
+\sisetup{
+  detect-all,
+  per-mode=symbol
+}
+
+\setlist[itemize]{leftmargin=1.4em, itemsep=0.25em, topsep=0.35em}
+\setlist[enumerate]{leftmargin=1.6em, itemsep=0.3em, topsep=0.4em}
+
+\titleformat{\chapter}[hang]
+  {\normalfont\Large\bfseries}
+  {\thechapter}{0.8em}{}
+\titlespacing*{\chapter}{0pt}{12pt}{10pt}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries}
+  {\thesection}{0.7em}{}
+\titleformat{\subsection}
+  {\normalfont\bfseries}
+  {\thesubsection}{0.7em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\instrument\ Operating Manual}
+\fancyhead[R]{\small Demonstration project}
+\fancyfoot[L]{\footnotesize\demoline}
+\fancyfoot[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[L]{\footnotesize\demoline}
+  \fancyfoot[R]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.3pt}
+}
+
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+\input{commands}
